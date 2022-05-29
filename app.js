@@ -1,19 +1,3 @@
-// const departMinutes = 5
-// let temps = departMinutes * 60
-
-// const timerElement = document.getElementById("timer")
-
-// setInterval(() => {
-//   let minutes = parseInt(temps / 60, 10)
-//   let secondes = parseInt(temps % 60, 10)
-
-//   minutes = minutes < 10 ? "0" + minutes : minutes
-//   secondes = secondes < 10 ? "0" + secondes : secondes
-
-//   timerElement.innerText = `${minutes}:${secondes}`
-//   temps = temps <= 0 ? 0 : temps - 1
-// }, 1000)
-
 kaboom({
   global: true,
   fullscreen: true,
@@ -28,7 +12,7 @@ const JUMP_FORCE = 420 // puissance du saut
 const LITTLE_JUMP_FORCE = 280 // quand tu saute sur le mechants petit saut
 const BIG_JUMP_FORCE = 450 // saut avec champignon
 let CURRENT_JUMP_FORCE = JUMP_FORCE
-const FALL_DEATH = 400 // pour savoir quanf on meurt de chutes
+const FALL_DEATH = 400 // pour savoir quand on meurt de chutes
 const ENEMY_SPEED = 20 // vitesse du mechant
 let LIVES = 3 // vie de mario
 
@@ -84,9 +68,6 @@ function timer(x){
 
 
 scene("game", ({ level, score }) => { // dans le jeux
-  /*add ([
-    sprite("back", {width: width(), height: height()}) pour mettre une image dans le back
-  ]);*/
   layers(['bg', 'obj', 'ui','po'], 'obj')
 //12éè = fake
   const maps = [ // les maps
@@ -238,7 +219,6 @@ scene("game", ({ level, score }) => { // dans le jeux
     sprite('link-right'), solid(),scale(0.40),
     pos(100, 205),
     body(),
-    // color(0, 0, 255), couleur
     origin('bot')
   ])
 
@@ -255,7 +235,7 @@ scene("game", ({ level, score }) => { // dans le jeux
     pos(50, 6),
     layer('li')
   ])
-  add([// pour voir les vies que nous avons
+  add([// pour voir le temps que nous avons
     text(temps),
     pos(500, 6),
     layer('li')
@@ -274,16 +254,19 @@ scene("game", ({ level, score }) => { // dans le jeux
     };
   } 
 
-  // if (temps == 0) {
-  //   go('lose', { score: scoreLabel.value, level: level});
-  //       monAudio.pause();
-  // }
-
   if (isBig) {
     player.scale = vec2(0.50);
     CURRENT_JUMP_FORCE = BIG_JUMP_FORCE;
   }
   
+  player.collides('mushroom', (m) => { // pour que le player mange le champignon
+    destroy(m); 
+    if (isBig == false) {
+      toBig();
+    }
+    score += 500
+  });
+
   function toSmall() { // si il est petit est les capacites de la forme petite
     if (isBig) {
       isBig = false;
@@ -309,7 +292,7 @@ scene("game", ({ level, score }) => { // dans le jeux
       toSmall()
     };
   })
-
+// piece
   player.on("headbump", (obj) => { // pour les bloc avec piece et champignon
     if (obj.is('coin-surprise')) {
       gameLevel.spawn('$', obj.gridPos.sub(0, 1));
@@ -332,13 +315,7 @@ scene("game", ({ level, score }) => { // dans le jeux
     m.dir = - m.dir
   })
 
-  player.collides('mushroom', (m) => { // pour que le player mange le champignon
-    destroy(m); 
-    if (isBig == false) {
-      toBig();
-    }
-    score += 500
-  });
+ 
 
   collides('mushroom', 'dangerous', (m, d) => { // pour que si un mechant et un champignon se tape il partent chaqu'un dans leur direction
     m.dir = - m.dir
@@ -365,7 +342,7 @@ scene("game", ({ level, score }) => { // dans le jeux
       destroy(d);
     };
   });
-
+//piece
   player.collides('coin', (c) => { // interractions quand le player touche une piece
     destroy(c);
     scoreLabel.value++;
@@ -385,6 +362,21 @@ scene("game", ({ level, score }) => { // dans le jeux
   })
   
   keyPress('s', () => { // la touche pour changer de monde
+    if (isOnPipe) {
+      if (level%2 == 0) {
+        go('game', {
+          level: (level + 1) % maps.length,
+          score: scoreLabel.value
+        });
+      } else {
+        go('game', {
+          level: (level - 1) % maps.length,
+          score: scoreLabel.value
+        });
+      }
+    }
+  });
+  keyPress('down', () => { // la touche pour changer de monde
     if (isOnPipe) {
       if (level%2 == 0) {
         go('game', {
@@ -512,7 +504,7 @@ scene('lose', ({ score, level }) => {
   add([text(score, 32), origin('center'), pos(width()/2, height()/ 2)]);
   add([text("\\/"), origin('center'), pos(width()/2, height(1)/ 3+10),scale(1.5)]);
   add([text("||"), origin('center'), pos(width()/2, height(1)/ 3),scale(1.5)]);
-  add([text("T'es nul mon reuf"), origin('center'), pos(width()/2, height(1)/ 5),scale(1.5)]);
+  add([text("T'es pas très fort"), origin('center'), pos(width()/2, height(1)/ 5),scale(1.5)]);
   add([text("regarde tes points"), origin('center'), pos(width()/2, height(1)/ 4),scale(1.5)]);
   add([text("recommence si tu pense pouvoir le faire"), origin('center'),pos(width() / 2 , height() / 2 + 180),scale(1.5)]);
   keyPress('space', () => {
@@ -539,7 +531,7 @@ scene('game_over', ({ score }) => {
 scene('start', ({}) => {
   add([text("press space to start"), origin('center'), pos(width()/2, height()/ 2)]);
   add([text("Tu as 5 min pour terminer le niveau tous les niveaux"), origin('center'), pos(width()/2, height()/ 3)]);
-  add([text("SUPER ADRIEN"), origin('center'), pos(width()/2, height(1)/ 5),scale(2)]);
+  add([text("SUPER LINK"), origin('center'), pos(width()/2, height(1)/ 5),scale(2)]);
   keyPress('space', () => {
     go("game", { level: 0, score: 0});
   });

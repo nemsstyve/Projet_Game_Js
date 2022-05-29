@@ -17,6 +17,4 @@ command : git clone https://github.com/nemsstyve/Projet_Game_Js
 - Pour rentrer dans le tuyaux: s et fleche du bas.<br>
 - Pour mettre pause: p     Pour relancer: r
 
-Projet réaliser par Daniel-Da-Cunha-Gomes, Styve NEMATCHA, Coranthin Etheve & Mahmoud 
-
-
+Projet réaliser par Daniel-Da-Cunha-Gomes, Styve NEMATCHA, Coranthin Etheve & Mahmoud GHARSALLAH 
