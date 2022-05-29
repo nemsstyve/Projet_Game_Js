@@ -25,17 +25,3 @@ body nav {
     display: flex;
     flex-wrap: wrap;
 }
-.song{
-    margin-left: 2%;
-    margin-right: 80%;
-    border: 5px solid black;
-    width: 9rem;
-    height: 3rem;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-    border-radius: 20px;
-} 
-.song button{
-    margin-top: 10%;
-}

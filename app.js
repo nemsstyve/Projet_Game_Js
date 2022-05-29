@@ -57,7 +57,7 @@ loadSprite('pipe-bottom-left', 'c1cYSbt.png')
 loadSprite('pipe-bottom-right', 'nqQ79eI.png')
 loadSprite('ground', 'ground.png')
 loadSprite('blueGround', 'blueGround.png')
-loadSprite('castle', 'castle.png')
+loadSprite('castle', 'supermarcket.png')
 loadSprite('metal', 'brownBloc.png')
 loadSprite('noBlock', 'noBlock.png')
 loadSprite('poto', 'poto.png')
@@ -76,6 +76,11 @@ loadSprite('blue-steel', 'gqVoI2b.png')
 loadSprite('blue-evil-shroom', 'SvV4ueD.png')
 loadSprite('blue-surprise', 'RMqCc1G.png')
 
+function timer(x){
+  for(i=x; i>=0; i--) { (function(temps) {
+    setTimeout(function() {console.log(temps);}, (x*1000)-(1000*temps)); })(temps);
+  }
+}
 
 
 scene("game", ({ level, score }) => { // dans le jeux
@@ -97,7 +102,7 @@ scene("game", ({ level, score }) => { // dans le jeux
       '0                                     -+    ()                ===   ==          ()                                   ====           ',
       '0           12                        ()    ()               ====   ===         ==                    12            =====           ',
       '0           ()      ^          ^      ()    ()      ^   ^   =====   ====    ^  ====                   ()        ^  ======     m     ',
-      'G                  G                        G                       G                                 G                 G  ',
+      'G                  G                        G                       G                                 G                 G      G',
   
     ],
     [
@@ -199,7 +204,7 @@ scene("game", ({ level, score }) => { // dans le jeux
     '}': [sprite('unboxed'), solid()],
     'G': [sprite('ground'), solid(), 'walk'],
     'g': [sprite('blueGround'), solid(), 'walk'],
-    'C': [sprite('castle')],
+    'C': [sprite('castle'), scale(0.4)],
     'm': [sprite('metal'), solid(), 'bot'],
     '0': [sprite('noBlock'), solid(), 'bot'],
     '|': [sprite('poto'), solid(), 'fin'],
@@ -251,10 +256,11 @@ scene("game", ({ level, score }) => { // dans le jeux
     layer('li')
   ])
   add([// pour voir les vies que nous avons
-    text(timerElement.innerText),
+    text(temps),
     pos(500, 6),
     layer('li')
   ])
+  
   
   add([text('level ' + parseInt(level + 1) ), pos(100, 6)]);
   
@@ -266,7 +272,12 @@ scene("game", ({ level, score }) => { // dans le jeux
     } else {
       scoreLabel.value += 500;
     };
-  }
+  } 
+
+  // if (temps == 0) {
+  //   go('lose', { score: scoreLabel.value, level: level});
+  //       monAudio.pause();
+  // }
 
   if (isBig) {
     player.scale = vec2(0.50);
@@ -348,9 +359,7 @@ scene("game", ({ level, score }) => { // dans le jeux
       scoreLabel.text = scoreLabel.value;
       destroy(d);
       player.jump(LITTLE_JUMP_FORCE);
-      // monAudio.play();
       
-      // shake(120) faire vibrer l'écran
     } else {
       toSmall();
       destroy(d);
@@ -475,8 +484,10 @@ scene("game", ({ level, score }) => { // dans le jeux
   keyPress('p', () => {// mettre en pause
     if (debug.paused == false) {
       debug.paused = true
+      monAudio.pause();
       go ("pause", {
         score: scoreLabel.value
+        
       });
     } else {
       debug.paused = false
@@ -518,6 +529,7 @@ scene('game_over', ({ score }) => {
   add([text("T'es eclate sa grand mere mon reuf"), origin('center'), pos(width()/2, height(1)/ 5),scale(1.5)]);
   add([text("regarde tes points"), origin('center'), pos(width()/2, height(1)/ 4),scale(1.5)]);
   add([text("recommence si tu pense pouvoir le faire"), origin('center'),pos(width() / 2 , height() / 2 + 180),scale(1.5)]);
+  add([text("+ 3 vie vue que tes nul"), origin('center'), pos(width()/2, height()/ 2 + 100),scale(1.5)]);
   keyPress('space', () => {
     go("game", { level: 0, score: 0});
    
@@ -541,10 +553,17 @@ scene('pause', ({ score }) => {
       go("game", { level: 0, score: 0});
       isBig = false
       debug.paused = false
+      monAudio.play();
     }
   });
 
 });
 
 
-start("start", {}, monAudio.play(), ); // pour lancer le jeu
+start("start", {}, monAudio.play(),timer(400) ); // pour lancer le jeu
+
+/* source: 
+https://www.youtube.com/watch?v=2nucjefSr6I
+https://www.youtube.com/watch?v=XX93O4ZVUZI
+https://kaboomjs.com/
+*/
